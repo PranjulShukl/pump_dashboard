@@ -1,0 +1,526 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Vision Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+
+    <style>
+        *
+        {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+        /* Navbar Styling */
+        .navbar {
+            /* background-color: #3d3bf3;  Dark Blue */
+            background-color: #133e87;
+            background-color: #f8f8f8;
+            color: #ff5d00;
+            color: #133e87;
+            padding: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            height: 55px;
+            top: 0;
+            z-index: 1;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            animation: slideIn 1s ease-out;
+        }
+
+        .navbar h1 {
+            margin: 0;
+        }
+
+        .navbar button {
+            margin: 20px;
+            font-size: 18px;
+            background-color: #ff5d00; /* orange */
+            color: #d8e1e7;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .navbar button:hover {
+            color: #ff5d00;
+            background-color: #d8e1e7; /* Darker Red Orange */
+            transform: translateY(-3px);
+        }
+
+        .my-logo {
+            height: 50px;
+        }
+        .my-logo2 {
+            height: 35px;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background-color: #93b0d9; /* blue */
+            width: 200px;
+            height: 100%;
+            position: fixed;
+            top: 50px; /* Below the navbar */
+            left: 0;
+            padding-top: 20px;
+            transition: 0.3s;
+            overflow-x: hidden;
+            box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar button {
+            color: white;
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            margin-bottom: 5px;
+            /* background-color: #d8e1e7;   light blue */
+            background-color: #ff5d00;
+            border: 2px solid #00478f;
+            cursor: pointer;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 45px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #7a9abf;
+            transform: translateX(5px);
+        }
+
+        .sidebar.closed {
+            width: 0;
+        }
+
+
+        /* Main content styling */
+        .main-content {
+            margin-left: 200px;
+            margin-top:55px;
+            padding: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.full {
+            margin-left: 0;
+        }
+
+        .my-container{
+            padding-top:5px;
+        }
+
+      .table-prop {
+        width: 90%;
+        border-collapse: collapse;
+      }
+
+      td, th {
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+      }
+
+      tr {
+        height: 60px;
+      }
+
+      .center-box {
+        width: 80px;
+        height: 25px;
+        background-color: #4CAF50;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+      }
+
+    .overview-section {
+      background-color: #f8f9fa; /* Light background color */
+      padding: 10px;            /* Spacing around the content */
+      border-radius: 10px;      /* Rounded corners */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    }
+
+    .overview-card{
+      text-align: center;         /* Center text and icons */
+      border: 1px solid #e9ecef; /* Light border */
+      border-radius: 8px;        /* Rounded corners */
+      padding: 15px;             /* Internal padding */
+    }
+
+    .overview-card i {
+      font-size: 2rem; /* Icon size */
+      margin-bottom: 5px;
+    }
+
+    .overview-card .label {
+      font-size: 0.9rem;
+      color: gray; /* Lighter text for labels */
+    }
+
+    .overview-card .value {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+
+
+
+    #chartContainer {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      width: 90%;
+      max-width: 1200px;
+      height: 600px; /* Increase height */
+    }
+
+    select {
+      width: 220px;
+      padding: 12px;
+      font-size: 16px;
+      margin: 20px 0;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    select:hover {
+      background-color: #0056b3;
+    }
+
+    .chart-title {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    select {
+      padding: 10px;
+      margin: 20px;
+    }
+    canvas {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .text-prop {
+      font-size: 1.75rem;
+      }
+
+
+
+
+        /* Animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+
+
+
+        /* Footer Styling */
+        .footer {
+            background-color: #1e3e62; /* dark Blue */
+            color: white;
+            text-align: center;
+            padding: 2px;
+<!--            position: fixed;-->
+            width: 100%;
+            bottom: 0;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>Pump Data Dashboard</h2>
+        <img src="{% static 'my_app/images/Brand_Logo.bmp' %}"  alt="Inverter1" class="my-logo2">
+    </div>
+
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="{% url 'home' %}"><button >Home</button></a>
+        <a href="{% url 'about' %}"><button >Dashboard</button></a>
+        <a href="{% url 'report' %}"><button >Historical Report</button></a>
+        <a href="{% url 'report' %}"><button >Alert Report</button></a>
+        <a href="{% url 'report' %}"><button >Summary Report</button></a>
+        <button id="sidebarToggle">☰ </button>
+    </div>
+
+    <div id="mainContent" class="main-content">
+        <!-- Top Bar Section -->
+          <div class="my-container">
+
+    <div class="container mt-3">
+    <h3 class="text-center mb-4">Account Overview</h3>
+    <div class="row g-3 overview-section mt-1">
+
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="overview-card">
+        <i class="bi bi-house-door-fill text-primary"></i>
+        <div class="label">Total Devices</div>
+        <div id="i_sites" class="value">27</div>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="overview-card">
+          <i class="bi bi-gear-fill"></i>
+          <div class="label">Auto</div>
+          <div id="i_capacity" class="value">19</div>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="overview-card">
+          <i class="bi bi-hand-index-fill text-warning"></i>
+          <div class="label">Manual</div>
+          <div id="pg_today" class="value">8</div>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="overview-card">
+          <i class="bi bi-play-fill text-success"></i>
+          <div class="label">Working</div>
+          <div id="pg_total" class="value">19</div>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="overview-card">
+          <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+          <div class="label">Non Working</div>
+          <div class="value">8</div>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-sm-6">
+        <div class="overview-card">
+          <i class="bi bi-flower1 text-warning"></i>
+          <div class="label">CO2 Saved</div>
+          <div id="i_co2_saved" class="value">0 Ton</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div style="margin-top: 40px; display: flex; justify-content: center; align-items: center;">
+    <table class="table-prop mb-5" >
+      <thead>
+        <tr>
+          <th scope="col">S.No.</th>
+          <th scope="col">Sites</th>
+          <th scope="col">UID</th>
+          <th scope="col">Pump Staus</th>
+          <th scope="col">Pump State</th>
+          <th scope="col">Power Supply</th>
+          <th scope="col">Trip</th>
+          <th scope="col">Flow Rate</th>
+          <th scope="col">Today Consump</th>
+          <th scope="col">Total Consump</th>
+
+
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i01_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i011_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0111_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv1_et">---</td>
+          <td id="inv1_eto">0</td>
+          <td id="inv1_pr">0</td>
+          <td id="inv1_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i02_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i022_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0222_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv2_et">---</td>
+          <td id="inv2_eto">0</td>
+          <td id="inv2_pr">0</td>
+                      <td id="inv2_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i03_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i033_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0333_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv3_et">---</td>
+          <td id="inv3_eto">0</td>
+          <td id="inv3_pr">0</td>
+                      <td id="inv3_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i04_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i044_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0444_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv4_et">---</td>
+          <td id="inv4_eto">0</td>
+          <td id="inv4_pr">0</td>
+                      <td id="inv4_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i05_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i055_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0555_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv5_et">---</td>
+          <td id="inv5_eto">0</td>
+          <td id="inv5_pr">0</td>
+                      <td id="inv5_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i06_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i066_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0666_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv6_et">---</td>
+          <td id="inv6_eto">0</td>
+          <td id="inv6_pr">0</td>
+                      <td id="inv6_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i07_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i077_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0777_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv7_et">---</td>
+          <td id="inv7_eto">0</td>
+          <td id="inv7_pr">0</td>
+                      <td id="inv7_pr1">0</td>
+
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Bitipur</td>
+          <td>970</td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i08_status" class="rounded-5 center-box">On</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i088_status" class="rounded-5 center-box">Auto</div></div></td>
+          <td><div style="display: flex; justify-content: center; align-items: center;"><div id="i0888_status" class="rounded-5 center-box">Yes</div></div></td>
+          <td id="inv8_et">---</td>
+          <td id="inv8_eto">0</td>
+          <td id="inv8_pr">0</td>
+                      <td id="inv8_pr1">0</td>
+
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+  <h1 class="text-prop">Energy Generation Over Time</h1>
+
+  <select id="timeInterval" onchange="updateGraph()">
+    <option value="daily">Today Energy Generation</option>
+    <option value="monthly">Total Energy Generation</option>
+    <option value="yearly">Yesterday Enery Generation</option>
+  </select>
+
+  <canvas id="myChart"></canvas>
+
+
+</div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; Enigma Control & Solution Pvt Ltd. All Rights Reserved.
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Sidebar Toggle Script -->
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleButton = document.getElementById('sidebarToggle');
+
+        toggleButton.addEventListener('click', function() {
+            sidebar.classList.toggle('closed');
+            mainContent.classList.toggle('full');
+        });
+    </script>
+
+</body>
+</html>
